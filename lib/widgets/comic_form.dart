@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 class ComicForm extends StatefulWidget {
   final ComicBloc comicBloc;
   final bool mobile;
-  const ComicForm({required this.comicBloc, required this.mobile, super.key});
+  final BuildContext ctx;
+  const ComicForm(
+      {required this.ctx,
+      required this.comicBloc,
+      required this.mobile,
+      super.key});
 
   @override
   State<ComicForm> createState() => _ComicFormState();
@@ -22,6 +27,7 @@ class _ComicFormState extends State<ComicForm> {
       padding: const EdgeInsets.all(10),
       // alignment: Alignment,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           DropdownMenu<int>(
               initialSelection: comicList.first,
@@ -36,16 +42,35 @@ class _ComicFormState extends State<ComicForm> {
                   comicId = val!;
                 });
               }),
-          TextFormField(
-            controller: controller,
-            focusNode: _focusNode,
-            onFieldSubmitted: (value) async {
-              widget.comicBloc.comicController
-                  .add(FetchComicEvent(value, comicId));
-
-              if (widget.mobile) Navigator.pop(context);
-            },
+          const SizedBox(
+            height: 10,
           ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextFormField(
+              maxLines: 10,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),
+              controller: controller,
+              focusNode: _focusNode,
+              onFieldSubmitted: (value) async {
+                // widget.comicBloc.comicController
+                //     .add(FetchComicEvent(widget.ctx, value, comicId));
+
+                // if (widget.mobile) Navigator.pop(context);
+              },
+            ),
+          ),
+          TextButton(
+              onPressed: () {
+                String value = controller.text;
+                widget.comicBloc.comicController
+                    .add(FetchComicEvent(widget.ctx, value, comicId));
+                controller.clear();
+                if (widget.mobile) Navigator.pop(context);
+              },
+              child: const Text("Generate"))
         ],
       ),
     );

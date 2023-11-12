@@ -29,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final comicBloc = ComicBloc();
+  bool isLoading = false;
   void initState() {
     super.initState();
     _setListener();
@@ -37,6 +38,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void _setListener() {
     comicBloc.updateStream.listen((event) {
       setState(() {});
+    });
+    comicBloc.loadingStateStream.listen((event) {
+      setState(() {
+        isLoading = event;
+      });
     });
   }
 
@@ -47,16 +53,19 @@ class _MyHomePageState extends State<MyHomePage> {
           if (sizingInformation.deviceScreenType == DeviceScreenType.desktop) {
             return DeskTopView(
               comicBloc: comicBloc,
+              isLoading: isLoading,
             );
           }
 
           if (sizingInformation.deviceScreenType == DeviceScreenType.tablet) {
             return TabletView(
               comicBloc: comicBloc,
+              isLoading: isLoading,
             );
           }
           return MobileView(
             comicBloc: comicBloc,
+            isLoading: isLoading,
           );
         },
       ),
